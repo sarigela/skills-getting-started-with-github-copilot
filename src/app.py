@@ -99,30 +99,22 @@ def signup_for_activity(activity_name: str, email: str):
     activity = activities[activity_name]
 
 
-    # Check email is valid
-    if "@" not in email or "." not in email.split("@")[-1]:
-        raise HTTPException(status_code=400, detail="Invalid email address")
-    # Check email is from Mergington High School
-    if not email.endswith("@mergington.edu"):
-        raise HTTPException(status_code=400, detail="Email must be from Mergington High School domain")
-    # Check email is not empty
-    if not email:
-        raise HTTPException(status_code=400, detail="Email cannot be empty")
+    # Validate email
+    email = email.lower()
+    if not email or "@" not in email or not email.endswith("@mergington.edu") or "." not in email.split("@")[-1]:
+        raise HTTPException(status_code=400, detail="Invalid email address. Must be a non-empty Mergington High School email.")
 
-    # Check max participants
+    # Check if student is already signed up for this or another activity
+    for act_name, act in activities.items():
+        if email in act["participants"]:
+            if act_name == activity_name:
+                raise HTTPException(status_code=400, detail="Student is already signed up for this activity")
+            else:
+                raise HTTPException(status_code=400, detail="Student is already signed up for another activity")
+
+    # Check if activity is full
     if len(activity["participants"]) >= activity["max_participants"]:
         raise HTTPException(status_code=400, detail="Activity is full")
-    
-    # Check studient is already signed up
-    if email in activity["participants"]:
-        raise HTTPException(status_code=400, detail="Student is already signed up for this activity")
-    # Check if email is already signed up for another activity
-    for act in activities.values():
-        if email in act["participants"]:
-            raise HTTPException(status_code=400, detail="Student is already signed up for another activity")
-    # Check if activity is already full
-    if len(activity["participants"]) >= activity["max_participants"]:
-        raise HTTPException(status_code=400, detail="Activity is already full")
 
 
     # Add student
