@@ -38,6 +38,42 @@ activities = {
         "schedule": "Mondays, Wednesdays, Fridays, 2:00 PM - 3:00 PM",
         "max_participants": 30,
         "participants": ["john@mergington.edu", "olivia@mergington.edu"]
+    },
+    "Swimming": {
+        "description": "Learn swimming techniques and participate in water sports",
+        "schedule": "Wednesdays, 4:00 PM - 5:30 PM",
+        "max_participants": 15,
+        "participants": ["lucas@mergington.edu", "mia@mergington.edu"]
+    },
+    "Kayaking": {
+        "description": "Explore kayaking and water navigation skills",
+        "schedule": "Saturdays, 10:00 AM - 12:00 PM",
+        "max_participants": 10,
+        "participants": ["noah@mergington.edu", "ava@mergington.edu"]
+    },
+    "Rock Climbing": {
+        "description": "Learn rock climbing techniques and safety measures",
+        "schedule": "Thursdays, 3:00 PM - 5:00 PM",
+        "max_participants": 8,
+        "participants": ["liam@mergington.edu", "isabella@mergington.edu"]
+    },
+    "Hiking Club": {
+        "description": "Explore nature trails and learn hiking essentials",
+        "schedule": "Sundays, 8:00 AM - 12:00 PM",
+        "max_participants": 20,
+        "participants": ["elijah@mergington.edu", "amelia@mergington.edu"]
+    },
+    "Archery": {
+        "description": "Practice archery skills and participate in competitions",
+        "schedule": "Tuesdays, 4:00 PM - 5:30 PM",
+        "max_participants": 12,
+        "participants": ["james@mergington.edu", "charlotte@mergington.edu"]
+    },
+    "Shooting Range": {
+        "description": "Learn precision shooting and firearm safety",
+        "schedule": "Fridays, 5:00 PM - 6:30 PM",
+        "max_participants": 10,
+        "participants": ["benjamin@mergington.edu", "harper@mergington.edu"]
     }
 }
 
@@ -61,6 +97,23 @@ def signup_for_activity(activity_name: str, email: str):
 
     # Get the specificy activity
     activity = activities[activity_name]
+
+
+    # Check email is valid
+    if "@" not in email or "." not in email.split("@")[-1]:
+        raise HTTPException(status_code=400, detail="Invalid email address")
+    # Check email is from Mergington High School
+    if not email.endswith("@mergington.edu"):
+        raise HTTPException(status_code=400, detail="Email must be from Mergington High School domain")
+    # Check email is not empty
+    if not email:
+        raise HTTPException(status_code=400, detail="Email cannot be empty")
+
+    # Check max participants
+    if len(activity["participants"]) >= activity["max_participants"]:
+        raise HTTPException(status_code=400, detail="Activity is full")
+    
+    # Check studient is already signed up
 
     # Add student
     activity["participants"].append(email)
